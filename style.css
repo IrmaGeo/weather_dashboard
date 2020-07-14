@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  font-size: 30px;
+  background-color: black;
+  color: white;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+/* .container {
+  float: left;
+  width: 30%;
+} */
+.search {
+  float: left;
+  width: 18%;
+  margin-right: 20px;
+}
+
+.card {
+  position: relative;
+  display: -ms-flexbox;
+  /* display: flex; */
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+.accordion {
+  float: right;
+  width: 80%;
+}
+#left {
+  float: left;
+  width: 20%;
+  margin-right: 20px;
+  margin-top: 20px;
+}
