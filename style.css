@@ -26,13 +26,26 @@ header {
   float: right;
   width: 80%;
 }
-#left,
 .current {
   margin-right: 20px;
   margin-bottom: 20px;
   padding: 20px;
   font-size: 10px;
   background-color: cornflowerblue;
+}
+.future,
+.Right {
+  float: right;
+  width: 73%;
+  margin-bottom: 20px;
+}
+.left {
+  float: left;
+  width: 20%;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  background-color: blue;
+  color: white;
 }
 .red {
   background-color: red;
