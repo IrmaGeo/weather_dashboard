@@ -31,14 +31,24 @@
     ></script>
   </head>
   <body>
-    <script>
-      var APIkey = "";
-      var queryURL =
-        "api.giphy.com/v1/gifs/search?api_key:vg7gP1BWV9Wh10HPK9BZbm5pSdjUTTDD";
-      $.ajax({
-        url: queryURL,
+    <script src="moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script type="text/javascript">
+      var settings = {
+        async: true,
+        crossDomain: true,
+        url:
+          "https://andruxnet-world-cities-v1.p.rapidapi.com/?query=brooklyn&searchby=city",
         method: "GET",
-      }).then(function (response) {
+        headers: {
+          "x-rapidapi-host": "andruxnet-world-cities-v1.p.rapidapi.com",
+          "x-rapidapi-key":
+            "d588265a86mshe10b8e86cb13860p151d8ajsn476f9ecf9daf",
+        },
+      };
+
+      $.ajax(settings).done(function (response) {
         console.log(response);
       });
     </script>

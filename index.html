@@ -40,32 +40,16 @@
     <div class="container">
         <div class="search">
             <div class="input-group mb">
-                <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
-                    aria-describedby="button-addon2" />
-              
+                <input type="text" class="form-control" placeholder="search city"/>
                 <button class="btn btn-outline-secondary" type="button" id="button-addon2">
-                    search
+                    search city
                 </button>
-                <!-- <button class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-search">search</button> -->
-
             </div>
-        
     <!-- search history -->
-        <div class="list-group list-group-flush">
-            <a href="#" class="list-group-item list-group-item-action">New York</a>
-            <a href="#" class="list-group-item list-group-item-action">San Francisco</a>
-            <a href="#" class="list-group-item list-group-item-action">Chicago</a>
+        <div class="list-group list-group-flush" id="history">
+         
         </div>
-    
-        <div class="dropdown-menu p-4 text-muted" style="max-width: 200px;">
-            <p>
-                Some example text that's free-flowing within the dropdown menu.
-            </p>
-            <p class="mb-0">
-                And this is more example text.
-            </p>
-        </div>
-        </div>
+    </div>
     </div>
     </div>
      <!-- current card -->
@@ -80,8 +64,8 @@
              
   
     <script src="moment.min.js"></script>
-      <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script type="text/javascript">
 
       
@@ -91,45 +75,106 @@
       // use api to get countries
       // when chooes cities add automaticaly search history
 
+
+
+  // var queryUrlft = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + AppiKey
+  var date = moment().format("MMM Do YY");
+  var Arr=[]
+
+
+          $("#button-addon2").on("click", function(){
+            cityName= $(".form-control").val().toUpperCase()
+            if (jQuery.inArray(cityName,Arr)===-1){
+              console.log(cityName)
+// if (cityName){
+// //weathercity)
+
+              var list = $("<a href=# class=list-group-item list-group-item-action" + " " + "id=" + cityName + ">" + cityName + "</a>")
+              $("#history").append(list)
+              Arr.push(cityName.toUpperCase())
+              } else {
+                var ErrorTag=("<label type=text placeholder=city does not exist!!!></>")
+                 $(".container").append(ErrorTag)
+              // }
+            }
+          
+
       // 2. THEN I am presented with current and future conditions for that city and that city is added to the search history
       // WHEN I view current weather conditions for that city
       // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
 
+         
+            var AppiKey = "f3918971cddc275fa0fe8911467b5ac7"
+            var queryUrlcr = "http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + AppiKey
+            console.log(queryUrlcr,cityName)
+             $.ajax({
+              url: queryUrlcr,
+              method: "GET"
+            }).then(function (response) {
+              // get value from weather API=====
+              var temp = Math.round((response.main.temp - 273.15) * 1.8 + 32);
+              var humidity = response.main.humidity;
+              var windSpeed = response.wind.speed;
+              var Icon = response.weather[0].icon // ====== var UVindex = response.wind.speed;
+              // create tags and set values ====
+              $(".current").empty()
+              var cityTag = ("<h3>" + cityName + " " + "(" + date + ")" + " " +
+                "<img src=http://openweathermap.org/img/wn/" + response.weather[0].icon +
+                ".png>"
+                + "</h3>");
+              var Ttemp = ("<h5>" + "Temperature: " + temp + " °F" + "</h5>")
+              var Thumidity = ("<h5>" + "humidity: " + humidity + " %" + "</h5>")
+              var TwindSpeed = ("<h5>" + "windSpeed: " + windSpeed + " MPH" + "</h5>")
+              var TUVIndex = ("<h5>" + "UV Index: " + "" + "</h5>")
 
-      var AppiKey="f3918971cddc275fa0fe8911467b5ac7"
-      var cityName="London"
-      var queryUrlcr="http://api.openweathermap.org/data/2.5/weather?q="+cityName+"&appid="+ AppiKey
-      var queryUrlft="http://api.openweathermap.org/data/2.5/forecast?q="+ cityName + "&appid=" + AppiKey
-      var date=moment().format("MMM Do YY");
-     
-      $.ajax({
-        url: queryUrlcr,
-        method:"GET"
-      }).then(function(response){
-        // get value from weather API=====
-        var temp = Math.round((response.main.temp - 273.15) * 1.8 + 32);
-        var humidity = response.main.humidity;
-        var windSpeed = response.wind.speed;
-        var Icon=response.weather[0].icon // ====== var UVindex = response.wind.speed;
-        // create tags and set values ====
-        var cityTag=("<h3>"+ cityName + " " + "(" + date + ")" + " " +
-          "<img src=http://openweathermap.org/img/wn/"+response.weather[0].icon+
-          ".png>"
-           +"</h3>");
-        var Ttemp=("<h5>"+"Temperature: " +temp+" °F"+"</h5>")
-        var Thumidity = ("<h5>"+ "humidity: "+ humidity+" %"+"</h5>")
-        var TwindSpeed = ("<h5>"+ "windSpeed: "+windSpeed+" MPH"+"</h5>")
-        var TUVIndex = ("<h5>" + "UV Index: " + "" + "</h5>")
+              // display values in current tag
+              $(".current").append(cityTag)
+              $(".current").append(Ttemp)
+              $(".current").append(Thumidity)
+              $(".current").append(TwindSpeed)
+              $(".current").append(TUVIndex)
 
-        // display values in current tag
-        $(".current").append(cityTag)
-        $(".current").append(Ttemp)
-        $(".current").append(Thumidity)
-        $(".current").append(TwindSpeed)
-        $(".current").append(TUVIndex)
+            })
+            
+            console.log($(".list - group - item").text())
 
-      })
-  
+$(".list-group-item").on("click", function(){
+ cityName= $(this).attr("id")
+
+  var queryUrlcr = "http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + AppiKey
+
+  $.ajax({
+    url: queryUrlcr,
+    method: "GET"
+  }).then(function (response) {
+    // get value from weather API=====
+    var temp = Math.round((response.main.temp - 273.15) * 1.8 + 32);
+    var humidity = response.main.humidity;
+    var windSpeed = response.wind.speed;
+    var Icon = response.weather[0].icon // ====== var UVindex = response.wind.speed;
+    // create tags and set values ====
+    $(".current").empty()
+    var cityTag = ("<h3>" + cityName + " " + "(" + date + ")" + " " +
+      "<img src=http://openweathermap.org/img/wn/" + response.weather[0].icon +
+      ".png>"
+      + "</h3>");
+    var Ttemp = ("<h5>" + "Temperature: " + temp + " °F" + "</h5>")
+    var Thumidity = ("<h5>" + "humidity: " + humidity + " %" + "</h5>")
+    var TwindSpeed = ("<h5>" + "windSpeed: " + windSpeed + " MPH" + "</h5>")
+    var TUVIndex = ("<h5>" + "UV Index: " + "" + "</h5>")
+
+    // display values in current tag
+    $(".current").append(cityTag)
+    $(".current").append(Ttemp)
+    $(".current").append(Thumidity)
+    $(".current").append(TwindSpeed)
+    $(".current").append(TUVIndex)
+
+})
+
+})
+    })
+        
      
       // WHEN I view the UV index
       // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
@@ -139,12 +184,12 @@
       // 3. WHEN I view future weather conditions for that city
       //  THEN I am presented with a 5 - day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
 
-       $.ajax({
-          url: queryUrlcr,
-          method: "GET"
-        }).then(function (response) {
-          console.log(response)
-        });
+      //  $.ajax({
+      //     url: queryUrlcr,
+      //     method: "GET"
+      //   }).then(function (response) {
+          
+      //   });
       // 4. WHEN I click on a city in the search history
       //    THEN I am again presented with current and future conditions for that city
 
