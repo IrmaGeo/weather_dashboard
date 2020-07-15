@@ -142,14 +142,14 @@
                 method: "GET"
               }).then(function (response) {
                 var UV = response.value
-                var TUVIndex = ("<h5>" + "UV Index: " + UV + "</h5>")
-                //  TUVIndex.addclass("purple")
+                var TUVIndex = ("<h6>" + "UV Index: <span id=UVind>" + UV + "</span></h6>")
                 $(".current").append(TUVIndex)
-                // if (UV<=2){
-                //   TUVIndex.addclass("green")
-                // } else {if (UV<=7){
-                //   TUVIndex.addclass("orange")
-                // }}
+                if (UV <= 2) {
+                  $("#UVind").addClass("green")
+                } else {
+                  if (UV <= 7) {
+                    $("#UVind").addClass("orange")
+                  } else {$("#UVind").addClass("red")}}
 
               })
 
@@ -206,14 +206,17 @@ var UVqueryURL="HTTPS://api.openweathermap.org/data/2.5/uvi?appid="+AppiKey+"&la
        method: "GET"
     }).then (function(response){
      var UV=response.value
-     var TUVIndex = ("<h5>" + "UV Index: " + UV + "</h5>")
-    //  TUVIndex.addclass("purple")
-      $(".current").append(TUVIndex)
-      // if (UV<=2){
-      //   TUVIndex.addclass("green")
-      // } else {if (UV<=7){
-      //   TUVIndex.addclass("orange")
-      // }}
+     var TUVIndex = ("<h6>"+ "UV Index: <span id=UVind>" + UV + "</span></h6>")
+     $(".current").append(TUVIndex)
+     if (UV<=2){
+       $("#UVind").addClass("green")
+     } else {if(UV<=7){
+        $("#UVind").addClass("orange")
+     } else $("#UVind").addClass("red")
+
+     }
+     
+      
 
     })
 
