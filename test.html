@@ -30,5 +30,17 @@
       crossorigin="anonymous"
     ></script>
   </head>
-  <body></body>
+  <body>
+    <script>
+      var APIkey = "";
+      var queryURL =
+        "api.giphy.com/v1/gifs/search?api_key:vg7gP1BWV9Wh10HPK9BZbm5pSdjUTTDD";
+      $.ajax({
+        url: queryURL,
+        method: "GET",
+      }).then(function (response) {
+        console.log(response);
+      });
+    </script>
+  </body>
 </html>

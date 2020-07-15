@@ -46,6 +46,8 @@
                 <button class="btn btn-outline-secondary" type="button" id="button-addon2">
                     search
                 </button>
+                <!-- <button class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-search">search</button> -->
+
             </div>
         
     <!-- search history -->
@@ -66,116 +68,23 @@
         </div>
     </div>
     </div>
-      
-      <!-- current and future weather -->
-      <div class="container">
-          <!-- current weather -->
-      <div class="accordion" id="accordionExample">
-        <div class="card">
-          <div class="card-header" id="headingOne">
-            <h2 class="mb-0">
-              <button
-                class="btn btn-link btn-block text-left"
-                type="button"
-                data-toggle="collapse"
-                data-target="#collapseOne"
-                aria-expanded="true"
-                aria-controls="collapseOne"
-              >
-                Current weather
-              </button>
-            </h2>
-          </div>
+     <!-- current card -->
+     <div class="current card">
 
-          <div
-            id="collapseOne"
-            class="collapse show"
-            aria-labelledby="headingOne"
-            data-parent="#accordionExample"
-          >
-            <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life
-              accusamus terry richardson ad squid. 3 wolf moon officia aute, non
-              cupidatat skateboard dolor brunch. Food truck quinoa nesciunt
-              laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
-              on it squid single-origin coffee nulla assumenda shoreditch et.
-              Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred
-              nesciunt sapiente ea proident. Ad vegan excepteur butcher vice
-              lomo. Leggings occaecat craft beer farm-to-table, raw denim
-              aesthetic synth nesciunt you probably haven't heard of them
-              accusamus labore sustainable VHS.
-            </div>
-          </div>
-        </div>
-        <!-- future weather -->
-        <div class="card">
-          <div class="card-header" id="headingTwo">
-            <h2 class="mb-0">
-              <button
-                class="btn btn-link btn-block text-left collapsed"
-                type="button"
-                data-toggle="collapse"
-                data-target="#collapseTwo"
-                aria-expanded="false"
-                aria-controls="collapseTwo"
-              >
-                future weather
-              </button>
-            </h2>
-          </div>
-          <div
-            id="collapseTwo"
-            class="collapse"
-            aria-labelledby="headingTwo"
-            data-parent="#accordionExample"
-          >
-            <div class="card-body">
-        <div class="card" id="left">
-           
-            day 1</br>
-            humidity</br>
-            temperature</br>
-            speed
-            
-        </div>
-        <div class="card"id="left">
-        
-            day 2</br>
-            humidity</br>
-            temperature</br>
-            speed
-        
-        </div>
-        <div class="card"id="left">
-        
-            Day 3</br>
-            humidity</br>
-            temperature</br>
-            speed
-        
-        </div>
-        <div class="card"id="left">
-        
-        Day 4</br>
-        humidity</br>
-        temperature</br>
-        speed
-        
-        </div>
-        <div class="card"id="left">
-        
-            Day 5</br>
-            humidity</br>
-            temperature</br>
-            speed
-        
-        </div>
-            </div>
-          </div>
-        </div>
+     </div>
+     <!-- future card -->
+      <div class="future">
+      
       </div>
-    </div>
-    <script>
+           
+             
+  
+    <script src="moment.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script type="text/javascript">
+
+      
       // 1. GIVEN a weather dashboard with form inputs
       // WHEN I search for a city
       // create search bar
@@ -185,25 +94,65 @@
       // 2. THEN I am presented with current and future conditions for that city and that city is added to the search history
       // WHEN I view current weather conditions for that city
       // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
+
+
+      var AppiKey="f3918971cddc275fa0fe8911467b5ac7"
+      var cityName="London"
+      var queryUrlcr="http://api.openweathermap.org/data/2.5/weather?q="+cityName+"&appid="+ AppiKey
+      var queryUrlft="http://api.openweathermap.org/data/2.5/forecast?q="+ cityName + "&appid=" + AppiKey
+      var date=moment().format("MMM Do YY");
+     
+      $.ajax({
+        url: queryUrlcr,
+        method:"GET"
+      }).then(function(response){
+        // get value from weather API=====
+        var temp = Math.round((response.main.temp - 273.15) * 1.8 + 32);
+        var humidity = response.main.humidity;
+        var windSpeed = response.wind.speed;
+        var Icon=response.weather[0].icon // ====== var UVindex = response.wind.speed;
+        // create tags and set values ====
+        var cityTag=("<h3>"+ cityName + " " + "(" + date + ")" + " " +
+          "<img src=http://openweathermap.org/img/wn/"+response.weather[0].icon+
+          ".png>"
+           +"</h3>");
+        var Ttemp=("<h5>"+"Temperature: " +temp+" °F"+"</h5>")
+        var Thumidity = ("<h5>"+ "humidity: "+ humidity+" %"+"</h5>")
+        var TwindSpeed = ("<h5>"+ "windSpeed: "+windSpeed+" MPH"+"</h5>")
+        var TUVIndex = ("<h5>" + "UV Index: " + "" + "</h5>")
+
+        // display values in current tag
+        $(".current").append(cityTag)
+        $(".current").append(Ttemp)
+        $(".current").append(Thumidity)
+        $(".current").append(TwindSpeed)
+        $(".current").append(TUVIndex)
+
+      })
+  
+     
       // WHEN I view the UV index
+      // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
 
-      // create card for current weather
-      // use weather api for get current weather and future weather details
+      
+      
+      // 3. WHEN I view future weather conditions for that city
+      //  THEN I am presented with a 5 - day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
 
-      x;
-      //3. THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-      // WHEN I view future weather conditions for that city
-
-      // 4. THEN I am presented with a 5 - day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
-      // 5. WHEN I click on a city in the search history
+       $.ajax({
+          url: queryUrlcr,
+          method: "GET"
+        }).then(function (response) {
+          console.log(response)
+        });
+      // 4. WHEN I click on a city in the search history
       //    THEN I am again presented with current and future conditions for that city
 
-      // 6. WHEN I open the weather dashboard
+      // 5. WHEN I open the weather dashboard
       // THEN I am presented with the last searched city forecast
     </script>
 
-    <script src="moment.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+   
+ 
   </body>
 </html>
