@@ -34,3 +34,12 @@ header {
   font-size: 10px;
   background-color: cornflowerblue;
 }
+.red {
+  background-color: red;
+}
+.green {
+  background-color: green;
+}
+.orange {
+  background-color: orange;
+}

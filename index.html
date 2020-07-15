@@ -85,7 +85,6 @@
           $("#button-addon2").on("click", function(){
             cityName= $(".form-control").val().toUpperCase()
             if (jQuery.inArray(cityName,Arr)===-1){
-              console.log(cityName)
 // if (cityName){
 // //weathercity)
 
@@ -106,7 +105,7 @@
          
             var AppiKey = "f3918971cddc275fa0fe8911467b5ac7"
             var queryUrlcr = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + AppiKey
-            console.log(queryUrlcr,cityName)
+
              $.ajax({
               url: queryUrlcr,
               method: "GET"
@@ -115,7 +114,9 @@
               var temp = Math.round((response.main.temp - 273.15) * 1.8 + 32);
               var humidity = response.main.humidity;
               var windSpeed = response.wind.speed;
-              var Icon = response.weather[0].icon // ====== var UVindex = response.wind.speed;
+              var Icon = response.weather[0].icon 
+              var latEl = response.coord.lat
+              var lonEl = response.coord.lon
               // create tags and set values ====
               $(".current").empty()
               var cityTag = ("<h3>" + cityName + " " + "(" + date + ")" + " " +
@@ -125,18 +126,35 @@
               var Ttemp = ("<h5>" + "Temperature: " + temp + " °F" + "</h5>")
               var Thumidity = ("<h5>" + "humidity: " + humidity + " %" + "</h5>")
               var TwindSpeed = ("<h5>" + "windSpeed: " + windSpeed + " MPH" + "</h5>")
-              var TUVIndex = ("<h5>" + "UV Index: " + "" + "</h5>")
+              
 
               // display values in current tag
               $(".current").append(cityTag)
               $(".current").append(Ttemp)
               $(".current").append(Thumidity)
               $(".current").append(TwindSpeed)
-              $(".current").append(TUVIndex)
+             
+
+              var UVqueryURL = "HTTPS://api.openweathermap.org/data/2.5/uvi?appid=" + AppiKey + "&lat=" + latEl + "&lon=" + lonEl
+
+              $.ajax({
+                url: UVqueryURL,
+                method: "GET"
+              }).then(function (response) {
+                var UV = response.value
+                var TUVIndex = ("<h5>" + "UV Index: " + UV + "</h5>")
+                //  TUVIndex.addclass("purple")
+                $(".current").append(TUVIndex)
+                // if (UV<=2){
+                //   TUVIndex.addclass("green")
+                // } else {if (UV<=7){
+                //   TUVIndex.addclass("orange")
+                // }}
+
+              })
 
             })
-            
-            console.log($(".list - group - item").text())
+
 
 $(".list-group-item").on("click", function(){
  cityName= $(this).attr("id")
@@ -151,7 +169,9 @@ $(".list-group-item").on("click", function(){
     var temp = Math.round((response.main.temp - 273.15) * 1.8 + 32);
     var humidity = response.main.humidity;
     var windSpeed = response.wind.speed;
-    var Icon = response.weather[0].icon // ====== var UVindex = response.wind.speed;
+    var Icon = response.weather[0].icon 
+    var latEl = response.coord.lat
+    var lonEl = response.coord.lon
     // create tags and set values ====
     $(".current").empty()
     var cityTag = ("<h3>" + cityName + " " + "(" + date + ")" + " " +
@@ -161,26 +181,46 @@ $(".list-group-item").on("click", function(){
     var Ttemp = ("<h5>" + "Temperature: " + temp + " °F" + "</h5>")
     var Thumidity = ("<h5>" + "humidity: " + humidity + " %" + "</h5>")
     var TwindSpeed = ("<h5>" + "windSpeed: " + windSpeed + " MPH" + "</h5>")
-    var TUVIndex = ("<h5>" + "UV Index: " + "" + "</h5>")
+    
 
     // display values in current tag
     $(".current").append(cityTag)
     $(".current").append(Ttemp)
     $(".current").append(Thumidity)
     $(".current").append(TwindSpeed)
-    $(".current").append(TUVIndex)
+   
+    console.log(response)
 
-})
 
-})
-    })
+   
         
      
       // WHEN I view the UV index
       // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
 
-      
-      
+
+var UVqueryURL="HTTPS://api.openweathermap.org/data/2.5/uvi?appid="+AppiKey+"&lat="+latEl+"&lon="+ lonEl
+
+    $.ajax({
+      url: UVqueryURL,
+       method: "GET"
+    }).then (function(response){
+     var UV=response.value
+     var TUVIndex = ("<h5>" + "UV Index: " + UV + "</h5>")
+    //  TUVIndex.addclass("purple")
+      $(".current").append(TUVIndex)
+      // if (UV<=2){
+      //   TUVIndex.addclass("green")
+      // } else {if (UV<=7){
+      //   TUVIndex.addclass("orange")
+      // }}
+
+    })
+
+     })
+      })
+       })
+
       // 3. WHEN I view future weather conditions for that city
       //  THEN I am presented with a 5 - day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
 
