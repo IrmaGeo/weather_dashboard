@@ -105,7 +105,7 @@
 
          
             var AppiKey = "f3918971cddc275fa0fe8911467b5ac7"
-            var queryUrlcr = "http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + AppiKey
+            var queryUrlcr = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + AppiKey
             console.log(queryUrlcr,cityName)
              $.ajax({
               url: queryUrlcr,
@@ -141,7 +141,7 @@
 $(".list-group-item").on("click", function(){
  cityName= $(this).attr("id")
 
-  var queryUrlcr = "http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + AppiKey
+  var queryUrlcr = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + AppiKey
 
   $.ajax({
     url: queryUrlcr,
