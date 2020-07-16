@@ -4,7 +4,7 @@
 }
 
 header {
-  font-size: 30px;
+  /* font-size: 30px; */
   background-color: black;
   color: white;
   text-align: center;
@@ -12,10 +12,7 @@ header {
   margin-bottom: 20px;
   padding: 10px;
 }
-/* .container {
-  float: left;
-  width: 30%;
-} */
+
 .search {
   float: left;
   width: 18%;
@@ -44,8 +41,12 @@ header {
   width: 20%;
   margin-right: 20px;
   margin-bottom: 20px;
-  background-color: blue;
+  background-color: rgb(0, 162, 255);
   color: white;
+  font-style: oblique;
+  box-shadow: 0 0 10px 2px;
+  padding: 5px;
+  border-style: inset;
 }
 .red {
   background-color: red;
@@ -55,4 +56,12 @@ header {
 }
 .orange {
   background-color: orange;
+}
+h5,
+h3 {
+  size: 8px;
+}
+
+#button-addon2 {
+  margin-left: 10px;
 }

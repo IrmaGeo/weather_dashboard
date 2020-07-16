@@ -41,12 +41,8 @@
       <div class="search">
         <div class="input-group mb">
           <input type="text" class="form-control" placeholder="search city" />
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            id="button-addon2"
-          >
-            search city
+          <button type="button" id="button-addon2">
+            search
           </button>
         </div>
         <!-- search history -->
@@ -57,7 +53,6 @@
     <!-- current card -->
     <div class="current card"></div>
 
-    <h2 class="future">5 Day forecast</h2>
     <div class="Right"></div>
     <!-- future card -->
 
@@ -66,20 +61,41 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script type="text/javascript">
       // 1. GIVEN a weather dashboard with form inputs
-      // WHEN I search for a city
-      // create search bar
-      // use api to get countries
       // when chooes cities add automaticaly search history
 
       var date = moment().format("MMM Do YY");
       var Arr = [];
+      var AppiKey = "f3918971cddc275fa0fe8911467b5ac7";
 
       $("#button-addon2").on("click", function () {
+        // WHEN I search for a city
+        // create search bar
+        pushArray();
+        // 2. THEN I am presented with current and future conditions for that city and that city is added to the search history
+        // WHEN I view current weather conditions for that city
+        // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
+        renderWeather();
+        renderUV();
+        render5Day();
+        localStorage.clear();
+        $(".list-group-item").on("click", function () {
+          cityName = $(this).attr("id");
+
+          renderWeather();
+          renderUV();
+          // WHEN I view the UV index
+          // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
+          render5Day();
+
+          // 3. WHEN I view future weather conditions for that city
+          //  THEN I am presented with a 5 - day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
+        });
+      });
+
+      // helper functions ======= 1. push array=====
+      function pushArray() {
         cityName = $(".form-control").val().toUpperCase();
         if (jQuery.inArray(cityName, Arr) === -1) {
-          // if (cityName){
-          // //weathercity)
-
           var list = $(
             "<a href=# class=list-group-item list-group-item-action" +
               " " +
@@ -91,18 +107,11 @@
           );
           $("#history").append(list);
           Arr.push(cityName.toUpperCase());
-        } else {
-          var ErrorTag =
-            "<label type=text placeholder=city does not exist!!!></>";
-          $(".container").append(ErrorTag);
-          // }
         }
-
-        // 2. THEN I am presented with current and future conditions for that city and that city is added to the search history
-        // WHEN I view current weather conditions for that city
-        // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
-
-        var AppiKey = "f3918971cddc275fa0fe8911467b5ac7";
+        return cityName;
+      }
+      //helper function ===== 2. render weather details: temp, icon, humidity, wind speed, UV index======
+      function renderWeather() {
         var queryUrlcr =
           "https://api.openweathermap.org/data/2.5/weather?q=" +
           cityName +
@@ -123,7 +132,7 @@
           // create tags and set values ====
           $(".current").empty();
           var cityTag =
-            "<h3>" +
+            "<h3 class=card-title>" +
             cityName +
             " " +
             "(" +
@@ -138,193 +147,89 @@
           var Thumidity = "<h5>" + "humidity: " + humidity + " %" + "</h5>";
           var TwindSpeed =
             "<h5>" + "windSpeed: " + windSpeed + " MPH" + "</h5>";
-
-          // display values in current tag
           $(".current").append(cityTag);
           $(".current").append(Ttemp);
           $(".current").append(Thumidity);
           $(".current").append(TwindSpeed);
 
-          var UVqueryURL =
-            "HTTPS://api.openweathermap.org/data/2.5/uvi?appid=" +
-            AppiKey +
-            "&lat=" +
-            latEl +
-            "&lon=" +
-            lonEl;
+          localStorage.setItem("lat", latEl);
+          localStorage.setItem("lon", lonEl);
+        });
+      }
 
-          $.ajax({
-            url: UVqueryURL,
-            method: "GET",
-          }).then(function (response) {
-            var UV = response.value;
-            var TUVIndex =
-              "<h6>" + "UV Index: <span id=UVind>" + UV + "</span></h6>";
-            $(".current").append(TUVIndex);
-            if (UV <= 2) {
-              $("#UVind").addClass("green");
+      // helper function ==== 3. render UV index ======
+      function renderUV() {
+        latEl = localStorage.getItem("lat");
+        lonEl = localStorage.getItem("lon");
+        var UVqueryURL =
+          "HTTPS://api.openweathermap.org/data/2.5/uvi?appid=" +
+          AppiKey +
+          "&lat=" +
+          latEl +
+          "&lon=" +
+          lonEl;
+
+        $.ajax({
+          url: UVqueryURL,
+          method: "GET",
+        }).then(function (response) {
+          var UV = response.value;
+          var TUVIndex =
+            "<h5>" + "UV Index: <span id=UVind>" + UV + "</span></h5>";
+          $(".current").append(TUVIndex);
+          if (UV <= 2) {
+            $("#UVind").addClass("green");
+          } else {
+            if (UV <= 7) {
+              $("#UVind").addClass("orange");
             } else {
-              if (UV <= 7) {
-                $("#UVind").addClass("orange");
-              } else {
-                $("#UVind").addClass("red");
-              }
+              $("#UVind").addClass("red");
             }
-          });
-          var queryUrlft =
-            "https://api.openweathermap.org/data/2.5/onecall?lat=" +
-            latEl +
-            "&lon=" +
-            lonEl +
-            "&exclude=hourly,minutly&appid=" +
-            AppiKey;
-          $.ajax({
-            url: queryUrlft,
-            method: "GET",
-          }).then(function (response) {
-            $(".Right").empty();
-            console.log(response);
-            for (i = 0; i < 5; i++) {
-              var temp = Math.round(
-                (response.daily[i].temp.day - 273.15) * 1.8 + 32
-              );
-              var date = moment()
-                .add(i + 1, "day")
-                .format("MMM Do YY");
-              var DivLeft = "<div class=left id=" + i + "></div>";
-              var dateFT = "<h2>" + date + "</h2>";
-              var iconFT =
-                "<h5><img src=https://openweathermap.org/img/wn/" +
-                response.daily[i].weather[0].icon +
-                "@2x.png></h5>";
-              var tempFT = "<h5>Temp: " + temp + " °F</h5>";
-              var himudityFT =
-                "<h5>Humidity: " + response.daily[i].humidity + "  %</h5>";
-
-              $(".Right").append(DivLeft);
-              $("#" + i).append(dateFT);
-              $("#" + i).append(iconFT);
-              $("#" + i).append(tempFT);
-              $("#" + i).append(himudityFT);
-            }
-          });
+          }
         });
+      }
+      // helper funcion ===== 4. render 5-day forecast======
+      function render5Day() {
+        latEl = localStorage.getItem("lat");
+        lonEl = localStorage.getItem("lon");
+        var queryUrlft =
+          "https://api.openweathermap.org/data/2.5/onecall?lat=" +
+          latEl +
+          "&lon=" +
+          lonEl +
+          "&exclude=hourly,minutly&appid=" +
+          AppiKey;
+        $.ajax({
+          url: queryUrlft,
+          method: "GET",
+        }).then(function (response) {
+          $(".Right").empty();
 
-        $(".list-group-item").on("click", function () {
-          cityName = $(this).attr("id");
+          for (i = 0; i < 5; i++) {
+            var temp = Math.round(
+              (response.daily[i].temp.day - 273.15) * 1.8 + 32
+            );
+            var date = moment()
+              .add(i + 1, "day")
+              .format("MMM Do YY");
+            var DivLeft = "<div class=left id=" + i + "></div>";
+            var dateFT = "<h2>" + date + "</h2>";
+            var iconFT =
+              "<h5><img src=https://openweathermap.org/img/wn/" +
+              response.daily[i].weather[0].icon +
+              "@2x.png></h5>";
+            var tempFT = "<h5>Temp: " + temp + " °F</h5>";
+            var himudityFT =
+              "<h5>Humidity: " + response.daily[i].humidity + "  %</h5>";
 
-          var queryUrlcr =
-            "https://api.openweathermap.org/data/2.5/weather?q=" +
-            cityName +
-            "&appid=" +
-            AppiKey;
-
-          $.ajax({
-            url: queryUrlcr,
-            method: "GET",
-          }).then(function (response) {
-            // get value from weather API=====
-            var temp = Math.round((response.main.temp - 273.15) * 1.8 + 32);
-            var humidity = response.main.humidity;
-            var windSpeed = response.wind.speed;
-            var Icon = response.weather[0].icon;
-            var latEl = response.coord.lat;
-            var lonEl = response.coord.lon;
-            // create tags and set values ====
-            $(".current").empty();
-            var cityTag =
-              "<h3>" +
-              cityName +
-              " " +
-              "(" +
-              date +
-              ")" +
-              " " +
-              "<img src=https://openweathermap.org/img/wn/" +
-              response.weather[0].icon +
-              ".png>" +
-              "</h3>";
-            var Ttemp = "<h5>" + "Temperature: " + temp + " °F" + "</h5>";
-            var Thumidity = "<h5>" + "humidity: " + humidity + " %" + "</h5>";
-            var TwindSpeed =
-              "<h5>" + "windSpeed: " + windSpeed + " MPH" + "</h5>";
-
-            // display values in current tag
-            $(".current").append(cityTag);
-            $(".current").append(Ttemp);
-            $(".current").append(Thumidity);
-            $(".current").append(TwindSpeed);
-
-            // WHEN I view the UV index
-            // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-
-            var UVqueryURL =
-              "HTTPS://api.openweathermap.org/data/2.5/uvi?appid=" +
-              AppiKey +
-              "&lat=" +
-              latEl +
-              "&lon=" +
-              lonEl;
-
-            $.ajax({
-              url: UVqueryURL,
-              method: "GET",
-            }).then(function (response) {
-              var UV = response.value;
-              var TUVIndex =
-                "<h6>" + "UV Index: <span id=UVind>" + UV + "</span></h6>";
-              $(".current").append(TUVIndex);
-              if (UV <= 2) {
-                $("#UVind").addClass("green");
-              } else {
-                if (UV <= 7) {
-                  $("#UVind").addClass("orange");
-                } else $("#UVind").addClass("red");
-              }
-            });
-
-            // 3. WHEN I view future weather conditions for that city
-            //  THEN I am presented with a 5 - day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
-            var queryUrlft =
-              "https://api.openweathermap.org/data/2.5/onecall?lat=" +
-              latEl +
-              "&lon=" +
-              lonEl +
-              "&exclude=hourly,minutly&appid=" +
-              AppiKey;
-            $.ajax({
-              url: queryUrlft,
-              method: "GET",
-            }).then(function (response) {
-              $(".Right").empty();
-              console.log(response);
-              for (i = 0; i < 5; i++) {
-                var temp = Math.round(
-                  (response.daily[i].temp.day - 273.15) * 1.8 + 32
-                );
-                var date = moment()
-                  .add(i + 1, "day")
-                  .format("MMM Do YY");
-                var DivLeft = "<div class=left id=" + i + "></div>";
-                var dateFT = "<h2>" + date + "</h2>";
-                var iconFT =
-                  "<h5><img src=https://openweathermap.org/img/wn/" +
-                  response.daily[i].weather[0].icon +
-                  "@2x.png></h5>";
-                var tempFT = "<h5>Temp: " + temp + " °F</h5>";
-                var himudityFT =
-                  "<h5>Humidity: " + response.daily[i].humidity + "  %</h5>";
-
-                $(".Right").append(DivLeft);
-                $("#" + i).append(dateFT);
-                $("#" + i).append(iconFT);
-                $("#" + i).append(tempFT);
-                $("#" + i).append(himudityFT);
-              }
-            });
-          });
+            $(".Right").append(DivLeft);
+            $("#" + i).append(dateFT);
+            $("#" + i).append(iconFT);
+            $("#" + i).append(tempFT);
+            $("#" + i).append(himudityFT);
+          }
         });
-      });
+      }
 
       // 4. WHEN I click on a city in the search history
       //    THEN I am again presented with current and future conditions for that city
