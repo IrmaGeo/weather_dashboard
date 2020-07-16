@@ -76,6 +76,18 @@
         if (cityName !== null) {
           renderWeather();
         }
+        $(".form-control").keypress(function (event) {
+          var key = event.keyCode ? event.keyCode : event.which;
+          if (key === 13) {
+            pushArray();
+            renderWeather();
+          }
+          $(".list-group-item").click(function () {
+            $(".UVindex").remove();
+            cityName = $(this).attr("id");
+            renderWeather();
+          });
+        });
 
         $("#button-addon2").click(function () {
           // WHEN I search for a city
