@@ -64,36 +64,44 @@
       // when chooes cities add automaticaly search history
       // $(document).ready(function () {
       $(document).ready(function () {
-        localStorage.clear();
+        localStorage.removeItem("lat");
+        localStorage.removeItem("lon");
         var date = moment().format("MMM Do YY");
         var Arr = [];
         var AppiKey = "f3918971cddc275fa0fe8911467b5ac7";
+        var x = 5; // this is a quantitie of days. max value should be 7.
+        // 5. WHEN I open the weather dashboard
+        // THEN I am presented with the last searched city forecast
+        var cityName = localStorage.getItem("city");
+        if (cityName !== null) {
+          renderWeather();
+        }
 
         $("#button-addon2").click(function () {
           // WHEN I search for a city
           // create search bar
-          pushArray();
-          renderWeather();
-
           // 2. THEN I am presented with current and future conditions for that city and that city is added to the search history
+
+          pushArray();
           // WHEN I view current weather conditions for that city
           // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
 
+          renderWeather();
+
+          // 4. WHEN I click on a city in the search history
+          //    THEN I am again presented with current and future conditions for that city
           $(".list-group-item").click(function () {
+            $(".UVindex").remove();
             cityName = $(this).attr("id");
             renderWeather();
-
-            // WHEN I view the UV index
-            // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-
-            // 3. WHEN I view future weather conditions for that city
-            // THEN I am presented with a 5 - day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
           });
         });
 
-        // helper functions ======= 1. push array=====
+        // ======================H E L P E R    F U N C T I O N S =======
+        //======= 1. push array=====
         function pushArray() {
           cityName = $(".form-control").val().toUpperCase();
+          localStorage.setItem("city", cityName);
           if (jQuery.inArray(cityName, Arr) === -1) {
             var list = $(
               "<a href=# class=list-group-item" +
@@ -107,11 +115,12 @@
             $("#history").append(list);
             Arr.push(cityName.toUpperCase());
           }
-          // return cityName;
         }
-        //helper function ===== 2. render weather details: temp, icon, humidity, wind speed, UV index======
+        // ===== 2. render weather details ======
         function renderWeather() {
-          localStorage.clear();
+          $(".UVindex").empty();
+          localStorage.removeItem("lat");
+          localStorage.removeItem("lon");
           var queryUrlcr =
             "https://api.openweathermap.org/data/2.5/weather?q=" +
             cityName +
@@ -163,10 +172,11 @@
             });
         }
 
-        // helper function ==== 3. render UV index ======
+        // ==== 3. render UV index ======
         function renderUV() {
           latEl = localStorage.getItem("lat");
           lonEl = localStorage.getItem("lon");
+          $(".UVindex").empty();
           var UVqueryURL =
             "HTTPS://api.openweathermap.org/data/2.5/uvi?appid=" +
             AppiKey +
@@ -188,8 +198,10 @@
               UV +
               "</span></h5>";
             $(".current").append(TUVIndex);
+            // WHEN I view the UV index
+            // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
 
-            if (UV <= 2) {
+            if (UV <= 2 && UV >= 0) {
               $("#UVind").addClass("green");
             } else {
               if (UV <= 7) {
@@ -200,7 +212,7 @@
             }
           });
         }
-        // helper funcion ===== 4. render 5-day forecast======
+        // ===== 4. render x-day forecast======
         function render5Day() {
           var queryUrlft =
             "https://api.openweathermap.org/data/2.5/onecall?lat=" +
@@ -215,7 +227,9 @@
           }).then(function (response) {
             $(".Right").empty();
 
-            for (i = 0; i < 5; i++) {
+            // 3. WHEN I view future weather conditions for that city
+            // THEN I am presented with a 5 - day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
+            for (i = 0; i < x; i++) {
               var temp = Math.round(
                 (response.daily[i].temp.day - 273.15) * 1.8 + 32
               );
@@ -241,11 +255,6 @@
           });
         }
       });
-      // 4. WHEN I click on a city in the search history
-      //    THEN I am again presented with current and future conditions for that city
-
-      // 5. WHEN I open the weather dashboard
-      // THEN I am presented with the last searched city forecast
     </script>
   </body>
 </html>
