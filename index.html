@@ -52,7 +52,6 @@
 
     <!-- current card -->
     <div class="current card"></div>
-
     <div class="Right"></div>
     <!-- future card -->
 
@@ -79,32 +78,39 @@
         $(".form-control").keypress(function (event) {
           var key = event.keyCode ? event.keyCode : event.which;
           if (key === 13) {
-            pushArray();
-            renderWeather();
+            cityName = $(".form-control").val().toUpperCase();
+            localStorage.setItem("city", cityName);
+            pushArray(cityName);
+            renderWeather(cityName);
           }
+
           $(".list-group-item").click(function () {
-            $(".UVindex").remove();
             cityName = $(this).attr("id");
+            localStorage.setItem("city", cityName);
+            $(".UVindex").remove();
             renderWeather();
           });
         });
 
         $("#button-addon2").click(function () {
+          cityName = $(".form-control").val().toUpperCase();
+          localStorage.setItem("city", cityName);
           // WHEN I search for a city
           // create search bar
           // 2. THEN I am presented with current and future conditions for that city and that city is added to the search history
 
-          pushArray();
+          pushArray(cityName);
           // WHEN I view current weather conditions for that city
           // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
 
-          renderWeather();
+          renderWeather(cityName);
 
           // 4. WHEN I click on a city in the search history
           //    THEN I am again presented with current and future conditions for that city
           $(".list-group-item").click(function () {
-            $(".UVindex").remove();
             cityName = $(this).attr("id");
+            localStorage.setItem("city", cityName);
+            $(".UVindex").remove();
             renderWeather();
           });
         });
@@ -112,8 +118,6 @@
         // ======================H E L P E R    F U N C T I O N S =======
         //======= 1. push array=====
         function pushArray() {
-          cityName = $(".form-control").val().toUpperCase();
-          localStorage.setItem("city", cityName);
           if (jQuery.inArray(cityName, Arr) === -1) {
             var list = $(
               "<a href=# class=list-group-item" +
